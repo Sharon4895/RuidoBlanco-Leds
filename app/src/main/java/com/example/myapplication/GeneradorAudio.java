@@ -7,29 +7,53 @@ import java.util.Random;
 
 public class GeneradorAudio {
     private AudioTrack audioTrack;
-    private boolean isPlaying = false;
+    private volatile boolean isPlaying = false;
+    private volatile boolean isPaused = false;
     private final int sampleRate = 44100;
 
     // Variables de control
     private float volumenGeneral = 0.5f;
-    private double volL = 1.0, volR = 1.0; // Control estéreo por patrón
-    private double frecuenciaModulacion = 10.0; // Hz de la gráfica
-    private float pitchFactor = 1.0f; // Frecuencia del tono (agudo/grave)
+    private double volL = 1.0, volR = 1.0; 
+    private double frecuenciaModulacion = 10.0; 
+    private float pitchFactor = 1.0f; 
     private boolean esModoRuido = true;
+
+    private double faseTono = 0;
+    private double faseModulacion = 0;
 
     public void setModo(boolean esRuido) { this.esModoRuido = esRuido; }
     public void setPitch(float pitch) { this.pitchFactor = pitch; }
     public void setFrecuenciaModulacion(double hz) { this.frecuenciaModulacion = hz; }
+
+    public void setVolumen(float vol) {
+        this.volumenGeneral = vol;
+    }
 
     public void setVolumenEstereo(double l, double r) {
         this.volL = l;
         this.volR = r;
     }
 
-    public void iniciarAudioEstereo() {
-        if (isPlaying) return;
+    public void pausarAudio() {
+        isPaused = true;
+        if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+            audioTrack.pause();
+        }
+    }
 
-        // Configuramos para STEREO (L y R)
+    public void reanudarAudio() {
+        isPaused = false;
+        if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+            audioTrack.play();
+        }
+    }
+
+    public void iniciarAudioEstereo() {
+        if (isPlaying) {
+            reanudarAudio();
+            return;
+        }
+
         int bufferSize = AudioTrack.getMinBufferSize(sampleRate,
                 AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT);
 
@@ -38,42 +62,43 @@ public class GeneradorAudio {
                 bufferSize, AudioTrack.MODE_STREAM);
 
         isPlaying = true;
+        isPaused = false;
+        faseTono = 0;
+        faseModulacion = 0;
 
         new Thread(() -> {
             short[] buffer = new short[bufferSize];
             Random random = new Random();
-            long sampleCount = 0;
 
             while (isPlaying) {
-                // El buffer estéreo se llena: [L, R, L, R, L, R...]
-                for (int i = 0; i < buffer.length; i += 2) {
-                    double muestraBase;
-
-                    if (esModoRuido) {
-                        // Ruido Blanco (Gaussiano)
-                        muestraBase = random.nextGaussian();
-                    } else {
-                        // Modo Tono: Onda Senoidal (Frecuencia base 440Hz * Pitch)
-                        double frecuenciaTono = 440.0 * pitchFactor;
-                        double angulo = 2.0 * Math.PI * sampleCount * (frecuenciaTono / sampleRate);
-                        muestraBase = Math.sin(angulo);
-                    }
-
-                    // Aplicamos la Envolvente Diente de Sierra (Sincronía con LED)
-                    double muestrasPorPeriodo = sampleRate / frecuenciaModulacion;
-                    double envolvente = (sampleCount % muestrasPorPeriodo) / muestrasPorPeriodo;
-
-                    // Canal Izquierdo (L)
-                    buffer[i] = (short) (muestraBase * envolvente * volL * volumenGeneral * Short.MAX_VALUE);
-
-                    // Canal Derecho (R)
-                    buffer[i + 1] = (short) (muestraBase * envolvente * volR * volumenGeneral * Short.MAX_VALUE);
-
-                    sampleCount++;
+                if (isPaused) {
+                    try { Thread.sleep(50); } catch (InterruptedException e) { break; }
+                    continue;
                 }
 
-                if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
-                    audioTrack.write(buffer, 0, buffer.length);
+                for (int i = 0; i < buffer.length; i += 2) {
+                    double muestraBase;
+                    if (esModoRuido) {
+                        muestraBase = random.nextGaussian() * 0.5;
+                    } else {
+                        double frecuenciaTono = 440.0 * pitchFactor;
+                        muestraBase = Math.sin(faseTono);
+                        faseTono += 2.0 * Math.PI * frecuenciaTono / sampleRate;
+                        if (faseTono > 2.0 * Math.PI) faseTono -= 2.0 * Math.PI;
+                    }
+
+                    double envolvente = faseModulacion / (2.0 * Math.PI);
+                    faseModulacion += 2.0 * Math.PI * frecuenciaModulacion / sampleRate;
+                    if (faseModulacion > 2.0 * Math.PI) faseModulacion -= 2.0 * Math.PI;
+
+                    buffer[i] = (short) (muestraBase * envolvente * volL * volumenGeneral * Short.MAX_VALUE);
+                    buffer[i + 1] = (short) (muestraBase * envolvente * volR * volumenGeneral * Short.MAX_VALUE);
+                }
+
+                if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED && isPlaying && !isPaused) {
+                    try {
+                        audioTrack.write(buffer, 0, buffer.length);
+                    } catch (Exception e) { e.printStackTrace(); }
                 }
             }
         }).start();
@@ -83,9 +108,14 @@ public class GeneradorAudio {
 
     public void detener() {
         isPlaying = false;
+        isPaused = false;
         if (audioTrack != null) {
-            audioTrack.stop();
-            audioTrack.release();
+            try {
+                audioTrack.pause();
+                audioTrack.flush();
+                audioTrack.stop();
+                audioTrack.release();
+            } catch (Exception e) { e.printStackTrace(); }
             audioTrack = null;
         }
     }

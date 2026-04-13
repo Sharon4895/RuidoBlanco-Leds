@@ -5,4 +5,5 @@
     <item name="btnPlayPause" type="id" />
     <item name="btnRuidoTono" type="id" />
     <item name="viewGrafica" type="id" />
+    <item name="tvProgramaActual" type="id" />
 </resources>

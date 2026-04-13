@@ -28,16 +28,23 @@ public class MainActivity extends AppCompatActivity {
             String pass = etPassword.getText().toString();
 
             if (!user.isEmpty() && !pass.isEmpty()) {
-                // Guardar usuario [cite: 13]
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                ContentValues reg = new ContentValues();
-                reg.put("alias", user);
-                reg.put("password", pass);
-                db.replace("usuarios", null, reg);
-                db.close();
+                try {
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    ContentValues reg = new ContentValues();
+                    reg.put("alias", user);
+                    reg.put("password", pass);
+                    // Usamos insertWithOnConflict o replace para evitar errores de clave primaria
+                    db.insertWithOnConflict("usuarios", null, reg, SQLiteDatabase.CONFLICT_REPLACE);
+                    db.close();
 
-                // Ir a la segunda pantalla
-                startActivity(new Intent(this, ControlActivity.class));
+                    // Pasamos el usuario a la siguiente actividad
+                    Intent intent = new Intent(this, ControlActivity.class);
+                    intent.putExtra("USUARIO_ALIAS", user);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(this, "Error BD: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
             } else {
                 Toast.makeText(this, "Ingrese datos", Toast.LENGTH_SHORT).show();
             }
