@@ -1,12 +1,15 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
+import android.media.MediaPlayer;
 import java.util.Random;
 
 public class GeneradorAudio {
     private AudioTrack audioTrack;
+    private MediaPlayer mediaPlayer;
     private volatile boolean isPlaying = false;
     private volatile boolean isPaused = false;
     private final int sampleRate = 44100;
@@ -27,6 +30,11 @@ public class GeneradorAudio {
 
     public void setVolumen(float vol) {
         this.volumenGeneral = vol;
+        // Actualizar volumen de la música de fondo si está activa
+        if (mediaPlayer != null) {
+            float volMusica = vol * 0.4f; // La música de fondo es un poco más suave
+            mediaPlayer.setVolume(volMusica, volMusica);
+        }
     }
 
     public void setVolumenEstereo(double l, double r) {
@@ -38,6 +46,10 @@ public class GeneradorAudio {
         isPaused = true;
         if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
             audioTrack.pause();
+            audioTrack.flush();
+        }
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
         }
     }
 
@@ -46,14 +58,32 @@ public class GeneradorAudio {
         if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
             audioTrack.play();
         }
+        if (mediaPlayer != null) {
+            mediaPlayer.start();
+        }
     }
 
-    public void iniciarAudioEstereo() {
+    public void iniciarAudioEstereo(Context context) {
         if (isPlaying) {
             reanudarAudio();
             return;
         }
 
+        // Iniciar Música de Fondo
+        try {
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+            }
+            mediaPlayer = MediaPlayer.create(context, R.raw.meditacion_fondo);
+            mediaPlayer.setLooping(true);
+            float volMusica = volumenGeneral * 0.4f;
+            mediaPlayer.setVolume(volMusica, volMusica);
+            mediaPlayer.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Iniciar Ruido Blanco / Tono
         int bufferSize = AudioTrack.getMinBufferSize(sampleRate,
                 AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT);
 
@@ -117,6 +147,13 @@ public class GeneradorAudio {
                 audioTrack.release();
             } catch (Exception e) { e.printStackTrace(); }
             audioTrack = null;
+        }
+        if (mediaPlayer != null) {
+            try {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+            } catch (Exception e) { e.printStackTrace(); }
+            mediaPlayer = null;
         }
     }
 }

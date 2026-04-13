@@ -105,7 +105,12 @@ public class ControlActivity extends AppCompatActivity {
                 } else {
                     esPausa = !esPausa;
                     btnPlayPause.setText(esPausa ? "REANUDAR" : "PAUSA");
-                    if (!esPausa) {
+                    if (esPausa) {
+                        if (generadorAudio != null) generadorAudio.pausarAudio();
+                        handlerSincronia.removeCallbacksAndMessages(null);
+                        enviarDatoBT("0,0\n");
+                    } else {
+                        if (generadorAudio != null) generadorAudio.reanudarAudio();
                         ultimoTick = System.currentTimeMillis();
                         bucleSincronia();
                     }
@@ -225,7 +230,7 @@ public class ControlActivity extends AppCompatActivity {
         esPausa = false;
         ultimoTick = System.currentTimeMillis();
         if (btnPlayPause != null) btnPlayPause.setText("PAUSA");
-        if (generadorAudio != null) generadorAudio.iniciarAudioEstereo();
+        if (generadorAudio != null) generadorAudio.iniciarAudioEstereo(this);
         bucleSincronia();
     }
 
