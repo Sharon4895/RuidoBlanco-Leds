@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="btnPitchDown" type="id" />
+    <item name="btnPitchUp" type="id" />
+    <item name="btnPlayPause" type="id" />
+    <item name="btnRuidoTono" type="id" />
+    <item name="viewGrafica" type="id" />
+    <item name="tvProgramaActual" type="id" />
+</resources>
