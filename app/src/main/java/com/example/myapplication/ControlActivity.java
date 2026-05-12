@@ -28,7 +28,7 @@ public class ControlActivity extends AppCompatActivity {
 
     // Componentes UI
     private Button btnBT, btnPlayPause, btnStop, btnRuidoTono, btnPitchUp, btnPitchDown;
-    private Button btnA2, btnA3, btnB4, btnAB1, btnAB5, btnAB6;
+    private Button btnA0, btnA1, btnA2, btnA3, btnA4, btnA5, btnA6, btnB0, btnB1, btnB2, btnB3, btnB4, btnB5, btnB6, btnAB0, btnAB1, btnAB2, btnAB3, btnAB4, btnAB5, btnAB6;
     private SeekBar sbVolumen, sbTiempo;
     private TextView tvEstado, tvProgramaActual;
     private VistaGrafica viewGrafica;
@@ -81,10 +81,25 @@ public class ControlActivity extends AppCompatActivity {
         btnPitchUp = findViewById(R.id.btnPitchUp);
         btnPitchDown = findViewById(R.id.btnPitchDown);
 
+        btnA0 = findViewById(R.id.btnA0);
+        btnA1 = findViewById(R.id.btnA1);
         btnA2 = findViewById(R.id.btnA2);
         btnA3 = findViewById(R.id.btnA3);
+        btnA4 = findViewById(R.id.btnA4);
+        btnA5 = findViewById(R.id.btnA5);
+        btnA6 = findViewById(R.id.btnA6);
+        btnB0 = findViewById(R.id.btnB0);
+        btnB1 = findViewById(R.id.btnB1);
+        btnB2 = findViewById(R.id.btnB2);
+        btnB3 = findViewById(R.id.btnB3);
         btnB4 = findViewById(R.id.btnB4);
+        btnB5 = findViewById(R.id.btnB5);
+        btnB6 = findViewById(R.id.btnB6);
+        btnAB0 = findViewById(R.id.btnAB0);
         btnAB1 = findViewById(R.id.btnAB1);
+        btnAB2 = findViewById(R.id.btnAB2);
+        btnAB3 = findViewById(R.id.btnAB3);
+        btnAB4 = findViewById(R.id.btnAB4);
         btnAB5 = findViewById(R.id.btnAB5);
         btnAB6 = findViewById(R.id.btnAB6);
 
@@ -144,7 +159,7 @@ public class ControlActivity extends AppCompatActivity {
         }
 
         if (sbTiempo != null) {
-            sbTiempo.setMax(30);
+            sbTiempo.setMax(80); // Aumentado para soportar el programa AB4 de 75 min
             sbTiempo.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -174,10 +189,25 @@ public class ControlActivity extends AppCompatActivity {
             });
         }
 
+        if (btnA0 != null) btnA0.setOnClickListener(v -> seleccionarPrograma("A0"));
+        if (btnA1 != null) btnA1.setOnClickListener(v -> seleccionarPrograma("A1"));
         if (btnA2 != null) btnA2.setOnClickListener(v -> seleccionarPrograma("A2"));
         if (btnA3 != null) btnA3.setOnClickListener(v -> seleccionarPrograma("A3"));
+        if (btnA4 != null) btnA4.setOnClickListener(v -> seleccionarPrograma("A4"));
+        if (btnA5 != null) btnA5.setOnClickListener(v -> seleccionarPrograma("A5"));
+        if (btnA6 != null) btnA6.setOnClickListener(v -> seleccionarPrograma("A6"));
+        if (btnB0 != null) btnB0.setOnClickListener(v -> seleccionarPrograma("B0"));
+        if (btnB1 != null) btnB1.setOnClickListener(v -> seleccionarPrograma("B1"));
+        if (btnB2 != null) btnB2.setOnClickListener(v -> seleccionarPrograma("B2"));
+        if (btnB3 != null) btnB3.setOnClickListener(v -> seleccionarPrograma("B3"));
         if (btnB4 != null) btnB4.setOnClickListener(v -> seleccionarPrograma("B4"));
+        if (btnB5 != null) btnB5.setOnClickListener(v -> seleccionarPrograma("B5"));
+        if (btnB6 != null) btnB6.setOnClickListener(v -> seleccionarPrograma("B6"));
+        if (btnAB0 != null) btnAB0.setOnClickListener(v -> seleccionarPrograma("AB0"));
         if (btnAB1 != null) btnAB1.setOnClickListener(v -> seleccionarPrograma("AB1"));
+        if (btnAB2 != null) btnAB2.setOnClickListener(v -> seleccionarPrograma("AB2"));
+        if (btnAB3 != null) btnAB3.setOnClickListener(v -> seleccionarPrograma("AB3"));
+        if (btnAB4 != null) btnAB4.setOnClickListener(v -> seleccionarPrograma("AB4"));
         if (btnAB5 != null) btnAB5.setOnClickListener(v -> seleccionarPrograma("AB5"));
         if (btnAB6 != null) btnAB6.setOnClickListener(v -> seleccionarPrograma("AB6"));
     }

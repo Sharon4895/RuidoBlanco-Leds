@@ -69,11 +69,25 @@
             android:columnCount="3"
             android:alignmentMode="alignMargins"
             android:layout_marginTop="8dp">
-
+            <Button android:id="@+id/btnA0" android:text="A0" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnA1" android:text="A1" android:layout_columnWeight="1" />
             <Button android:id="@+id/btnA2" android:text="A2" android:layout_columnWeight="1" />
             <Button android:id="@+id/btnA3" android:text="A3" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnA4" android:text="A4" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnA5" android:text="A5" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnA6" android:text="A6" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnB0" android:text="B0" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnB1" android:text="B1" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnB2" android:text="B2" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnB3" android:text="B3" android:layout_columnWeight="1" />
             <Button android:id="@+id/btnB4" android:text="B4" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnB5" android:text="B5" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnB6" android:text="B6" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnAB0" android:text="AB0" android:layout_columnWeight="1" />
             <Button android:id="@+id/btnAB1" android:text="AB1" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnAB2" android:text="AB2" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnAB3" android:text="AB3" android:layout_columnWeight="1" />
+            <Button android:id="@+id/btnAB4" android:text="AB4" android:layout_columnWeight="1" />
             <Button android:id="@+id/btnAB5" android:text="AB5" android:layout_columnWeight="1" />
             <Button android:id="@+id/btnAB6" android:text="AB6" android:layout_columnWeight="1" />
         </GridLayout>
