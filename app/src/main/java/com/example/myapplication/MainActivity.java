@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                     db.insertWithOnConflict("usuarios", null, reg, SQLiteDatabase.CONFLICT_REPLACE);
                     db.close();
 
-                    // Pasamos el usuario a la siguiente actividad
+
                     Intent intent = new Intent(this, ControlActivity.class);
                     intent.putExtra("USUARIO_ALIAS", user);
                     startActivity(intent);
