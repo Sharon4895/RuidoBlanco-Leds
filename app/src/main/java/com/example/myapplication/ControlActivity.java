@@ -23,15 +23,23 @@ import androidx.core.content.ContextCompat;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.UUID;
+import android.app.Dialog;
+import android.widget.ImageView;
+import android.content.Intent;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 
 public class ControlActivity extends AppCompatActivity {
 
     // Componentes UI
     private Button btnBT, btnPlayPause, btnStop, btnRuidoTono, btnPitchUp, btnPitchDown;
-    private Button btnA0, btnA1, btnA2, btnA3, btnA4, btnA5, btnA6, btnB0, btnB1, btnB2, btnB3, btnB4, btnB5, btnB6, btnAB0, btnAB1, btnAB2, btnAB3, btnAB4, btnAB5, btnAB6;
     private SeekBar sbVolumen, sbTiempo;
     private TextView tvEstado, tvProgramaActual;
     private VistaGrafica viewGrafica;
+    private Button btnVerImagen;
+    private Spinner spinnerProgramas;
+    private final String[] programas = {"A0", "A1", "A2", "A3", "A4", "A5", "A6", "B0", "B1", "B2", "B3", "B4", "B5", "B6", "AB0", "AB1", "AB2", "AB3", "AB4", "AB5", "AB6"};
 
     // Variables de Control
     private String programaSeleccionado = "A2";
@@ -80,34 +88,14 @@ public class ControlActivity extends AppCompatActivity {
         btnRuidoTono = findViewById(R.id.btnRuidoTono);
         btnPitchUp = findViewById(R.id.btnPitchUp);
         btnPitchDown = findViewById(R.id.btnPitchDown);
-
-        btnA0 = findViewById(R.id.btnA0);
-        btnA1 = findViewById(R.id.btnA1);
-        btnA2 = findViewById(R.id.btnA2);
-        btnA3 = findViewById(R.id.btnA3);
-        btnA4 = findViewById(R.id.btnA4);
-        btnA5 = findViewById(R.id.btnA5);
-        btnA6 = findViewById(R.id.btnA6);
-        btnB0 = findViewById(R.id.btnB0);
-        btnB1 = findViewById(R.id.btnB1);
-        btnB2 = findViewById(R.id.btnB2);
-        btnB3 = findViewById(R.id.btnB3);
-        btnB4 = findViewById(R.id.btnB4);
-        btnB5 = findViewById(R.id.btnB5);
-        btnB6 = findViewById(R.id.btnB6);
-        btnAB0 = findViewById(R.id.btnAB0);
-        btnAB1 = findViewById(R.id.btnAB1);
-        btnAB2 = findViewById(R.id.btnAB2);
-        btnAB3 = findViewById(R.id.btnAB3);
-        btnAB4 = findViewById(R.id.btnAB4);
-        btnAB5 = findViewById(R.id.btnAB5);
-        btnAB6 = findViewById(R.id.btnAB6);
+        spinnerProgramas = findViewById(R.id.spinnerProgramas);
 
         sbVolumen = findViewById(R.id.sbVolumen);
         sbTiempo = findViewById(R.id.sbTiempo);
         tvEstado = findViewById(R.id.tvEstado);
         tvProgramaActual = findViewById(R.id.tvProgramaActual);
         viewGrafica = findViewById(R.id.viewGrafica);
+        btnVerImagen = findViewById(R.id.btnVerImagen);
     }
 
     private void configurarListeners() {
@@ -189,28 +177,28 @@ public class ControlActivity extends AppCompatActivity {
             });
         }
 
-        if (btnA0 != null) btnA0.setOnClickListener(v -> seleccionarPrograma("A0"));
-        if (btnA1 != null) btnA1.setOnClickListener(v -> seleccionarPrograma("A1"));
-        if (btnA2 != null) btnA2.setOnClickListener(v -> seleccionarPrograma("A2"));
-        if (btnA3 != null) btnA3.setOnClickListener(v -> seleccionarPrograma("A3"));
-        if (btnA4 != null) btnA4.setOnClickListener(v -> seleccionarPrograma("A4"));
-        if (btnA5 != null) btnA5.setOnClickListener(v -> seleccionarPrograma("A5"));
-        if (btnA6 != null) btnA6.setOnClickListener(v -> seleccionarPrograma("A6"));
-        if (btnB0 != null) btnB0.setOnClickListener(v -> seleccionarPrograma("B0"));
-        if (btnB1 != null) btnB1.setOnClickListener(v -> seleccionarPrograma("B1"));
-        if (btnB2 != null) btnB2.setOnClickListener(v -> seleccionarPrograma("B2"));
-        if (btnB3 != null) btnB3.setOnClickListener(v -> seleccionarPrograma("B3"));
-        if (btnB4 != null) btnB4.setOnClickListener(v -> seleccionarPrograma("B4"));
-        if (btnB5 != null) btnB5.setOnClickListener(v -> seleccionarPrograma("B5"));
-        if (btnB6 != null) btnB6.setOnClickListener(v -> seleccionarPrograma("B6"));
-        if (btnAB0 != null) btnAB0.setOnClickListener(v -> seleccionarPrograma("AB0"));
-        if (btnAB1 != null) btnAB1.setOnClickListener(v -> seleccionarPrograma("AB1"));
-        if (btnAB2 != null) btnAB2.setOnClickListener(v -> seleccionarPrograma("AB2"));
-        if (btnAB3 != null) btnAB3.setOnClickListener(v -> seleccionarPrograma("AB3"));
-        if (btnAB4 != null) btnAB4.setOnClickListener(v -> seleccionarPrograma("AB4"));
-        if (btnAB5 != null) btnAB5.setOnClickListener(v -> seleccionarPrograma("AB5"));
-        if (btnAB6 != null) btnAB6.setOnClickListener(v -> seleccionarPrograma("AB6"));
+        if (spinnerProgramas != null) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, programas);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerProgramas.setAdapter(adapter);
+            spinnerProgramas.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    seleccionarPrograma(programas[position]);
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {}
+            });
+        }
+
+        if (btnVerImagen != null) {
+            btnVerImagen.setOnClickListener(v -> {
+                Intent intent = new Intent(ControlActivity.this, CanvasActivity.class);
+                startActivity(intent);
+            });
+        }
     }
+
 
     private void verificarPermisosYConectar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -247,12 +235,18 @@ public class ControlActivity extends AppCompatActivity {
     }
 
     private void seleccionarPrograma(String id) {
+        boolean programChanged = !id.equals(this.programaSeleccionado);
         this.programaSeleccionado = id;
-        this.tiempoTranscurrido = 0;
-        if (sbTiempo != null) sbTiempo.setProgress(0);
+        if (programChanged) {
+            this.tiempoTranscurrido = 0;
+            if (sbTiempo != null) sbTiempo.setProgress(0);
+        }
         if (tvProgramaActual != null) tvProgramaActual.setText("Programa: " + id);
-        Toast.makeText(this, "Seleccionado: " + id, Toast.LENGTH_SHORT).show();
-        guardarConfiguracionEnBD();
+        
+        if (programChanged) {
+            Toast.makeText(this, "Seleccionado: " + id, Toast.LENGTH_SHORT).show();
+            guardarConfiguracionEnBD();
+        }
     }
 
     private void iniciarPrograma() {
@@ -319,6 +313,15 @@ public class ControlActivity extends AppCompatActivity {
                 volumenGeneral = vol / 100f;
                 programaSeleccionado = fila.getString(1);
                 if (tvProgramaActual != null) tvProgramaActual.setText("Programa: " + programaSeleccionado);
+                
+                // Set Spinner selection to match DB value on startup
+                if (spinnerProgramas != null) {
+                    int index = java.util.Arrays.asList(programas).indexOf(programaSeleccionado);
+                    if (index >= 0) {
+                        spinnerProgramas.setSelection(index);
+                    }
+                }
+
                 esModoRuido = (fila.getInt(2) == 0);
                 if (btnRuidoTono != null) btnRuidoTono.setText(esModoRuido ? "Modo: Ruido Blanco" : "Modo: Tono");
                 pitchActual = fila.getFloat(3);
