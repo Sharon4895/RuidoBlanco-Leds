@@ -248,7 +248,6 @@ public class CalculadoraProgramas {
     public static double mapearD(long x, long in_min, long in_max, double out_min, double out_max) {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
-
     public static int[] obtenerBrillosPorPatron(String programa, long msActual, int brilloMax) {
         long min = msActual / 60000;
         double frec = obtenerFrecuencia(programa, msActual);
